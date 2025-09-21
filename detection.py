@@ -11,7 +11,6 @@ class DrowsyDetector:
         pygame.mixer.music.load("assets/alarm.wav")
 
     def update(self, ear):
-        print(f"EAR={ear:.3f} | Counter={self.counter} | State={self.state}")  # 👈 debug info
 
         if ear < EAR_THRESHOLD:
             self.counter += 1
