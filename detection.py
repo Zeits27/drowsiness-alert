@@ -1,6 +1,6 @@
 import pygame
 
-EAR_THRESHOLD = 0.15
+EAR_THRESHOLD = 0.2
 CONSEC_FRAMES = 20   
 
 class DrowsyDetector:
