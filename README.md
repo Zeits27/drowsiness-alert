@@ -3,6 +3,9 @@
 Drowsy Alert adalah program sederhana untuk mendeteksi kantuk melalui kamera dengan memantau mata.  
 Program ini menggunakan **MediaPipe FaceMesh** untuk melacak wajah, menghitung **Eye Aspect Ratio (EAR)**, dan menyalakan alarm jika mata terpejam terlalu lama.
 
+##
+Customize alarmnya dengan ganti alarm.wav dengan suara apapun yang kamu inginkan
+
 ## 🚀 Cara Menjalankan
 
 1. Clone / download project ini  
