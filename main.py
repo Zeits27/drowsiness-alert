@@ -1,45 +1,45 @@
 import cv2
-import mediapipe as mp
+import logging
+from tracker import EyeTracker
+from detection import DrowsyDetector
 
-
+# Setup logger
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(message)s"
+)
 
 def main():
-
-    mp_drawing = mp.solutions.drawing_utils
-    mp_face_mesh = mp.solutions.face_mesh 
-
     cap = cv2.VideoCapture(0)
-    with mp_face_mesh.FaceMesh(
-        max_num_faces=1,
-        refine_landmarks=True,
-        min_detection_confidence=0.5,
-        min_tracking_confidence=0.5
-    )as face_mesh:
-        
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                break
-            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            results = face_mesh.process(rgb_frame)
-            frame_height, frame_width, _ = frame.shape
-            if results.multi_face_landmarks:
-                for face_landmarks in results.multi_face_landmarks:
+    tracker = EyeTracker()
+    detector = DrowsyDetector()
 
+    logging.info("Session started")
 
-                    for idx in LEFT_EYE + RIGHT_EYE:
-                        landmark = face_landmarks.landmark[idx]
-                        x = int(landmark.x * frame_width)
-                        y = int(landmark.y * frame_height)
-                        cv2.circle(frame, (x, y), 2, (0, 255, 0), -1)  # draw green dots
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
 
-            cv2.imshow('Webcam', frame)
+        left_eye, right_eye = tracker.get_landmark(frame)
+        if left_eye and right_eye:
+            tracker.draw_eyes(frame, left_eye, right_eye)
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+            left_ear = tracker.eye_aspect_ratio(left_eye)
+            right_ear = tracker.eye_aspect_ratio(right_eye)
+            ear = (left_ear + right_ear) / 2.0
+
+            sleepy = detector.update(ear)
+            if sleepy:
+                logging.warning("Drowsiness detected!")
+
+        cv2.imshow("Drowsy Alert", frame)
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            break
+
     cap.release()
     cv2.destroyAllWindows()
-
+    logging.info("Session ended")
 
 if __name__ == "__main__":
     main()

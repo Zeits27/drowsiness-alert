@@ -2,8 +2,8 @@ import cv2
 import mediapipe as mp
 import math
 
-LEFT_EYE = [33, 133, 159, 145, 153, 154, 155]
-RIGHT_EYE = [362, 263, 386, 374, 380, 381, 382]
+LEFT_EYE = [33, 160, 158, 133, 153, 144]
+RIGHT_EYE = [362, 385, 387, 263, 373, 380]
 
 class EyeTracker:
     def __init__(self):
@@ -22,15 +22,15 @@ class EyeTracker:
             return None, None
         face_landmarks = results.multi_face_landmarks[0]
         left_eye = [(int(face_landmarks.landmark[idx].x * w), int(face_landmarks.landmark[idx].y * h)) for idx in LEFT_EYE]
-        right_eye = [(int(face_landmarks.landmark[idx].x * w), int(face_landmarks.landmark.landmark[idx].y * h)) for idx in RIGHT_EYE]
+        right_eye = [(int(face_landmarks.landmark[idx].x * w), int(face_landmarks.landmark[idx].y * h)) for idx in RIGHT_EYE]
         return left_eye, right_eye
     def draw_eyes(self, frame, left_eye, right_eye):
         for (x, y) in left_eye + right_eye:
             cv2.circle(frame, (x, y), 2, (0, 255, 0), -1)  
+
     # bagian EAR
     def euclidean_distance(self, p1, p2):
-        return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
-    
+        return math.dist(p1, p2)
     def eye_aspect_ratio(self, eye):
         A = self.euclidean_distance(eye[1], eye[5])
         B = self.euclidean_distance(eye[2], eye[4])
